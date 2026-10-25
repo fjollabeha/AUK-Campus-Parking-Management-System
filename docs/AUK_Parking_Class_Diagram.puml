@@ -1,0 +1,145 @@
+@startuml
+title AUK Campus Parking Management System\nUML Class Diagram
+
+abstract class User {
+    - userId: String 
+    - name: String
+    - universityId: String
+    - email: String
+    - active: Boolean
+    + viewReservations(): List<Reservation>
+}
+
+class Student { 
+    + viewAvailableSpaces(start, end)
+    + reserveSpace(space, vehicle, start, end)
+    + cancelReservation(id): Boolean
+}
+
+class StaffMember {
+    + viewAvailableSpaces(start, end)
+    + reserveSpace(space, vehicle, start, end)
+    + cancelReservation(id): Boolean
+}
+
+class SecurityPersonnel {
+    + checkIn(reservationId): Boolean
+    + checkOut(reservationId): Boolean
+}
+
+class Administrator {
+    + addParkingSpace(space): void
+    + updateSpaceStatus(id, status): void
+    + manageUser(userId): void
+    + cancelReservation(id): Boolean
+    + setOperatingHours(hours): void
+}
+
+class Vehicle {
+    - vehicleId: String
+    - licensePlate: String
+    - make: String
+    - model: String
+    - color: String
+    - approved: Boolean
+    + requestApproval(): void
+    + approve(): void
+}
+
+class ParkingSpace {
+    - spaceId: String
+    - permittedUserType: UserType
+    - status: SpaceStatus
+    + isAvailable(start, end): Boolean
+    + updateStatus(status): void
+}
+
+class Reservation {
+    - reservationId: String
+    - startTime: DateTime
+    - endTime: DateTime
+    - status: ReservationStatus
+    - checkInTime: DateTime
+    - checkOutTime: DateTime
+    + validate(): Boolean
+    + cancel(): void
+    + checkIn(time): void
+    + checkOut(time): void
+    + markNoShow(): void
+}
+
+class DepositRecord {
+    - depositId: String
+    - amount: Decimal = 1.00
+    - status: DepositStatus
+    - updatedAt: DateTime
+    + refund(): void
+    + retain(): void
+}
+
+class OperatingHours {
+    - dayOfWeek: String
+    - openingTime: Time
+    - closingTime: Time
+    + allows(start, end): Boolean
+}
+
+enum UserType {
+    STUDENT
+    STAFF
+    PROFESSOR
+    VISITOR
+}
+
+enum SpaceStatus {
+    AVAILABLE 
+    RESERVED
+    OCCUPIED
+    OUT_OF_SERVICE
+}
+
+enum ReservationStatus {
+    RESERVED
+    CHECKED_IN
+    COMPLETED
+    CANCELLED
+    NO_SHOW
+}
+
+enum DepositStatus {
+    PENDING
+    REFUNDED
+    RETAINED
+}
+
+User <|-- Student
+User <|-- StaffMember
+User <|-- SecurityPersonnel
+User <|-- Administrator
+
+User "1" -- "0..*" Vehicle : registers 
+User "1" -- "0..*" Reservation : makes
+Vehicle "1" -- "0..*" Reservation : used for
+ParkingSpace "1" -- "0..*" Reservation : assigned to
+
+Reservation "1" *-- "1" DepositRecord : deposit
+
+Administrator ..> ParkingSpace : manages
+Administrator ..> OperatingHours : configures
+Administrator ..> Reservation : manages
+SecurityPersonnel ..> Reservation : verifies
+OperatingHours ..> Reservation : validates time
+
+ParkingSpace ..> UserType
+ParkingSpace ..> SpaceStatus
+Reservation ..> ReservationStatus
+DepositRecord ..> DepositStatus
+
+Student -[hidden]right- StaffMember
+StaffMember -[hidden]right- SecurityPersonnel
+SecurityPersonnel -[hidden]right- Administrator
+
+Vehicle -[hidden]right- ParkingSpace
+ParkingSpace -[hidden]right- OperatingHours
+
+@enduml
