@@ -1,4 +1,4 @@
-# Member 4 – Design Risks & Design Patterns
+# Design Risks & Design Patterns
 
 ## AUK Campus Parking Management System
 
