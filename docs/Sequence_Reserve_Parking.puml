@@ -1,0 +1,47 @@
+
+@startuml
+title AUK Campus Parking Management System\nReserve a Parking Space
+
+actor Student
+participant "Parking System" as System
+participant "ParkingSpace" as Space
+participant "Reservation" as Reservation
+participant "DepositRecord" as Deposit
+
+Student -> System: Request available spaces\n(startTime, endTime)
+System -> System: Check booking rules
+note right of System
+  - Duration is at most 6 hours
+  - Start time is within 24 hours
+  - User has no other open reservation
+  - Time falls within operating hours
+end note
+
+System -> Space: isAvailable(startTime, endTime)
+Space --> System: Availability result
+
+alt Booking rules are invalid
+    System --> Student: Show validation error
+
+else Booking rules are valid
+    alt Space is unavailable
+        System --> Student: Show no available spaces
+
+    else Space is available
+        Student -> System: reserveSpace(space, vehicle,\nstartTime, endTime)
+        System -> Reservation: validate()
+        Reservation --> System: Validation result
+
+        alt Reservation is valid
+            System -> Reservation: Create reservation
+            System -> Deposit: Record simulated €1 deposit
+            Deposit --> System: Deposit recorded
+            System --> Student: Reservation confirmed
+
+        else Reservation is invalid
+            System --> Student: Show validation error
+        end
+    end
+end
+
+@enduml

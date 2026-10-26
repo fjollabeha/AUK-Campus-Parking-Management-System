@@ -1,0 +1,41 @@
+
+@startuml
+title AUK Campus Parking Management System\nCancel a Reservation
+
+actor Student
+participant "Parking System" as System
+participant "Reservation" as Reservation
+participant "DepositRecord" as Deposit
+
+Student -> System: Request cancellation(reservationId)
+System -> Reservation: Find reservation(reservationId)
+Reservation --> System: Reservation details
+
+alt Reservation does not exist
+    System --> Student: Show reservation not found
+
+else Reservation exists
+    System -> Reservation: Check cancellation eligibility
+
+    alt Reservation is already cancelled,\ncompleted, or checked in
+        System --> Student: Reject cancellation
+
+    else Reservation can be cancelled
+        System -> System: Compare current time\nwith scheduled start time
+
+        alt Cancellation is before start time
+            System -> Reservation: cancel()
+            System -> Deposit: refund()
+            Deposit --> System: Deposit marked refunded
+            System --> Student: Cancellation confirmed\n€1 virtual refund recorded
+
+        else Cancellation is after start time
+            System -> Reservation: cancel()
+            System -> Deposit: retain()
+            Deposit --> System: Deposit marked retained
+            System --> Student: Cancellation confirmed\n€1 virtual deposit retained
+        end
+    end
+end
+
+@enduml

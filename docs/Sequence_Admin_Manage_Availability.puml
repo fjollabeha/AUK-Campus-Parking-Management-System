@@ -1,0 +1,46 @@
+
+@startuml
+title AUK Campus Parking Management System\nAdmin Manages Parking Availability
+
+actor Administrator
+participant "Parking System" as System
+participant "ParkingSpace" as Space
+participant "Reservation" as Reservation
+
+Administrator -> System: Request availability update\n(spaceId, newStatus)
+System -> System: Verify administrator permissions
+
+alt Administrator is not authorized
+    System --> Administrator: Reject request
+
+else Administrator is authorized
+    System -> Space: Find parking space(spaceId)
+    Space --> System: Parking space details
+
+    alt Parking space does not exist
+        System --> Administrator: Show space not found
+
+    else Parking space exists
+        System -> Space: Check current status
+        Space --> System: Current status
+
+        alt New status is invalid
+            System --> Administrator: Show validation error
+
+        else New status is valid
+            System -> Reservation: Check affected reservations
+            Reservation --> System: Reservation information
+
+            alt Existing reservations are affected
+                System --> Administrator: Request review of affected reservations
+
+            else No conflicting reservations
+                System -> Space: updateStatus(newStatus)
+                Space --> System: Status updated
+                System --> Administrator: Confirm availability update
+            end
+        end
+    end
+end
+
+@enduml
