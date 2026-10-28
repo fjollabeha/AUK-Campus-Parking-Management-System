@@ -29,8 +29,8 @@ This project focuses on defining the system's scope, modeling its structure and 
 
 ## Project Documentation
 
-- **[Project Part 1 Report (PDF)](docs/SWEN383_P1_EnisiMeBijat.pdf)**
-- **[Five-Minute Presentation Outline](docs/Presentation_Outline.md)**
+- **[Project Part 1 Report (PDF)](docs/Deliverables/SWEN383_P1_EnisiMeBijat.pdf)**
+- **[Five-Minute Presentation Outline](docs/Deliverables/Presentation_Outline.md)**
 - [Project Description and Scope](docs/Project_Documentation/PROJECT_DESCRIPTION_AND_SCOPE.md)
 - [Design Risks and Patterns](docs/Project_Documentation/Design_Risks_and_Patterns.md)
 
